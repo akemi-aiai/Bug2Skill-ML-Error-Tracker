@@ -1,6 +1,6 @@
 # Bug2Skill: ML Error & Practice Tracker
 
-**Bug2Skill** is a Streamlit-based portfolio project for tracking programming and machine learning mistakes and turning them into deliberate practice tasks.
+Developed a Streamlit-based learning analytics application for tracking programming and machine learning errors. Designed a SQLite database to store error cards, including mistake type, cause, fix, practice task, status, and review date. Implemented editable data tables, filtering, dashboard analytics, supervised/unsupervised ML checklists, and active-recall Practice Mode to support deliberate coding practice.
 
 ## Project idea
 
@@ -111,8 +111,3 @@ Track:
 - errors by status
 - errors by ML type
 - errors over time
-
-## Portfolio description
-
-**Bug2Skill: ML Error & Practice Tracker**  
-Developed a Streamlit-based learning analytics application for tracking programming and machine learning errors. Designed a SQLite database to store error cards, including mistake type, cause, fix, practice task, status, and review date. Implemented editable data tables, filtering, dashboard analytics, supervised/unsupervised ML checklists, and active-recall Practice Mode to support deliberate coding practice.
