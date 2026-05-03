@@ -6,11 +6,6 @@
 
 When learning machine learning, students often repeat the same mistakes: `KeyError` in pandas, data leakage, wrong train/test split, incorrect metrics, K-Means without scaling, PCA misinterpretation, rolling mean leakage, or wrong RMSE calculation.
 
-Bug2Skill helps transform each mistake into a learning card:
-
-```text
-Mistake → Cause → Fix → Mini practice task → Review → Mastery
-```
 
 ## Features
 
