@@ -11,44 +11,48 @@ from src.database import (
     TOPIC_OPTIONS,
     add_error,
 )
+from src.i18n import option_label, t
 
-st.title("Add New ML Error")
-st.write(
-    "Save a mistake as a learning card: what happened, why it happened, "
-    "how to fix it, and what mini-task will help you practice it."
-)
+st.title(f"{t('add_error_title')}")
+st.write(t("add_error_desc"))
+
+with st.expander(t("add_error_theory_title")):
+    st.write(t("add_error_theory_text"))
+    st.markdown(f"**{t('learning_loop')}:** {t('learning_loop_text')}")
 
 with st.form("add_error_form", clear_on_submit=True):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        error_date = st.date_input("Date", value=date.today())
-        project = st.text_input("Project", placeholder="Taxi Demand Forecasting")
-        ml_type = st.selectbox("ML type", ML_TYPE_OPTIONS)
+        error_date = st.date_input(t("date"), value=date.today())
+        project = st.text_input(t("project"), placeholder=t("project_placeholder"))
+        ml_type = st.selectbox(t("ml_type"), ML_TYPE_OPTIONS, format_func=option_label)
 
     with col2:
-        topic = st.selectbox("Topic", TOPIC_OPTIONS)
-        algorithm = st.text_input("Algorithm / Library", placeholder="K-Means, Ridge, pandas, sklearn")
-        error_type = st.text_input("Error type", placeholder="KeyError, Data Leakage, Wrong Metric")
+        topic = st.selectbox(t("topic"), TOPIC_OPTIONS)
+        algorithm = st.text_input(t("algorithm"), placeholder=t("algorithm_placeholder"))
+        error_type = st.text_input(t("error_type"), placeholder=t("error_type_placeholder"))
 
     with col3:
-        status = st.selectbox("Status", STATUS_OPTIONS, index=1)
-        difficulty = st.selectbox("Difficulty", DIFFICULTY_OPTIONS, index=1)
-        next_review_date = st.date_input("Next review date", value=date.today() + timedelta(days=3))
+        status = st.selectbox(t("status"), STATUS_OPTIONS, index=1, format_func=option_label)
+        difficulty = st.selectbox(t("difficulty"), DIFFICULTY_OPTIONS, index=1, format_func=option_label)
+        next_review_date = st.date_input(
+            t("next_review_date"), value=date.today() + timedelta(days=3)
+        )
 
-    mistake = st.text_area("What happened?", placeholder="Describe the error or weak point.")
-    cause = st.text_area("Why did it happen?", placeholder="Explain the reason behind the mistake.")
-    fix = st.text_area("How to fix it?", placeholder="Write the correct approach or code idea.")
+    mistake = st.text_area(t("what_happened"), placeholder=t("what_happened_placeholder"))
+    cause = st.text_area(t("why_happened"), placeholder=t("why_happened_placeholder"))
+    fix = st.text_area(t("how_fix"), placeholder=t("how_fix_placeholder"))
     practice_task = st.text_area(
-        "Mini practice task",
-        placeholder="Create a small exercise that trains this exact skill.",
+        t("mini_practice_task"),
+        placeholder=t("mini_practice_placeholder"),
     )
 
-    submitted = st.form_submit_button("Save error")
+    submitted = st.form_submit_button(t("save_error"))
 
     if submitted:
         if not project or not mistake:
-            st.error("Please fill at least Project and What happened.")
+            st.error(t("project_mistake_required"))
         else:
             add_error(
                 {
@@ -67,4 +71,4 @@ with st.form("add_error_form", clear_on_submit=True):
                     "next_review_date": str(next_review_date),
                 }
             )
-            st.success("Error saved successfully.")
+            st.success(t("error_saved"))

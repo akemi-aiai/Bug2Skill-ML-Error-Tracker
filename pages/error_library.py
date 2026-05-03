@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pandas as pd
 import streamlit as st
 
 from src.database import (
@@ -11,31 +12,42 @@ from src.database import (
     load_errors,
     save_editor_changes,
 )
+from src.i18n import option_label, t
 
-st.title("Error Library")
-st.write(
-    "Filter your mistakes, edit records directly in the table, and save changes back to SQLite."
-)
+st.title(f"{t('library_title')}")
+st.write(t("library_desc"))
+
+with st.expander(t("library_theory_title")):
+    st.write(t("library_theory_text"))
+    st.markdown(f"**{t('status_legend_title')}:** {t('status_legend_text')}")
 
 full_df = load_errors()
 
 if full_df.empty:
-    st.info("No errors yet. Add your first error on the Add Error page.")
+    st.info(t("no_errors_add"))
     st.stop()
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    topic_filter = st.selectbox("Topic", ["All"] + sorted(full_df["topic"].dropna().unique().tolist()))
+    topic_filter = st.selectbox(
+        t("topic"), ["All"] + sorted(full_df["topic"].dropna().unique().tolist()), format_func=option_label
+    )
 
 with col2:
-    status_filter = st.selectbox("Status", ["All"] + sorted(full_df["status"].dropna().unique().tolist()))
+    status_filter = st.selectbox(
+        t("status"), ["All"] + sorted(full_df["status"].dropna().unique().tolist()), format_func=option_label
+    )
 
 with col3:
-    ml_type_filter = st.selectbox("ML type", ["All"] + sorted(full_df["ml_type"].dropna().unique().tolist()))
+    ml_type_filter = st.selectbox(
+        t("ml_type"), ["All"] + sorted(full_df["ml_type"].dropna().unique().tolist()), format_func=option_label
+    )
 
 with col4:
-    difficulty_filter = st.selectbox("Difficulty", ["All"] + sorted(full_df["difficulty"].dropna().unique().tolist()))
+    difficulty_filter = st.selectbox(
+        t("difficulty"), ["All"] + sorted(full_df["difficulty"].dropna().unique().tolist()), format_func=option_label
+    )
 
 filtered_df = full_df.copy()
 
@@ -50,29 +62,32 @@ if difficulty_filter != "All":
 
 editor_df = filtered_df[EDITABLE_COLUMNS].copy()
 
-st.caption(
-    "Tip: You can edit existing rows, add new rows, or delete visible rows. "
-    "Click Save changes to database when you finish."
-)
+for date_column in ["date", "next_review_date"]:
+    editor_df[date_column] = pd.to_datetime(editor_df[date_column], errors="coerce").dt.date
+
+st.caption(t("table_tip"))
 
 edited_df = st.data_editor(
     editor_df,
     num_rows="dynamic",
     hide_index=True,
-    use_container_width=True,
+    width="stretch",
     disabled=["id"],
     column_config={
-        "id": st.column_config.NumberColumn("ID", disabled=True),
-        "date": st.column_config.DateColumn("Date"),
-        "next_review_date": st.column_config.DateColumn("Next review"),
-        "ml_type": st.column_config.SelectboxColumn("ML type", options=ML_TYPE_OPTIONS),
-        "topic": st.column_config.SelectboxColumn("Topic", options=TOPIC_OPTIONS),
-        "status": st.column_config.SelectboxColumn("Status", options=STATUS_OPTIONS),
-        "difficulty": st.column_config.SelectboxColumn("Difficulty", options=DIFFICULTY_OPTIONS),
-        "mistake": st.column_config.TextColumn("Mistake", width="large"),
-        "cause": st.column_config.TextColumn("Cause", width="large"),
-        "fix": st.column_config.TextColumn("Fix", width="large"),
-        "practice_task": st.column_config.TextColumn("Practice task", width="large"),
+        "id": st.column_config.NumberColumn(t("id"), disabled=True),
+        "date": st.column_config.DateColumn(t("date")),
+        "next_review_date": st.column_config.DateColumn(t("next_review")),
+        "ml_type": st.column_config.SelectboxColumn(t("ml_type"), options=ML_TYPE_OPTIONS),
+        "topic": st.column_config.SelectboxColumn(t("topic"), options=TOPIC_OPTIONS),
+        "status": st.column_config.SelectboxColumn(t("status"), options=STATUS_OPTIONS),
+        "difficulty": st.column_config.SelectboxColumn(t("difficulty"), options=DIFFICULTY_OPTIONS),
+        "project": st.column_config.TextColumn(t("project"), width="medium"),
+        "algorithm": st.column_config.TextColumn(t("algorithm"), width="medium"),
+        "error_type": st.column_config.TextColumn(t("error_type"), width="medium"),
+        "mistake": st.column_config.TextColumn(t("mistake"), width="large"),
+        "cause": st.column_config.TextColumn(t("cause"), width="large"),
+        "fix": st.column_config.TextColumn(t("fix"), width="large"),
+        "practice_task": st.column_config.TextColumn(t("practice_task"), width="large"),
     },
     key="error_library_editor",
 )
@@ -80,15 +95,10 @@ edited_df = st.data_editor(
 col_save, col_info = st.columns([1, 3])
 
 with col_save:
-    if st.button("Save changes to database", type="primary"):
+    if st.button(t("save_changes"), type="primary"):
         result = save_editor_changes(edited_df, editor_df)
-        st.success(
-            f"Saved: {result['updated']} updated, {result['inserted']} inserted, {result['deleted']} deleted."
-        )
+        st.success(t("saved_result").format(**result))
         st.rerun()
 
 with col_info:
-    st.info(
-        "Only rows currently visible under your filters are affected by delete operations. "
-        "Rows hidden by filters remain unchanged."
-    )
+    st.info(t("filter_delete_info"))
