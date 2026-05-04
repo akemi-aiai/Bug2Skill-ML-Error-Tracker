@@ -1,3 +1,12 @@
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Interactive%20App-ff4b4b)
+![ML](https://img.shields.io/badge/ML-Error%20Tracking-purple)
+![Practice](https://img.shields.io/badge/Practice-Active%20Recall-orange)
+![SQLite](https://img.shields.io/badge/Storage-SQLite-lightgrey)
+![Plotly](https://img.shields.io/badge/Charts-Plotly-green)
+![Bilingual](https://img.shields.io/badge/Bilingual-English%20%7C%20Russian-7c5cff)
+
+
 # Bug2Skill: ML Error & Practice Tracker
 
 Bug2Skill is a bilingual Streamlit app for tracking programming and machine learning mistakes and turning them into deliberate practice tasks.
